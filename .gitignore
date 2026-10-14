@@ -1,0 +1,9 @@
+# results written by the scripts
+reduced_model/python/output/
+full_model/branch_Lambda*_from_chi*.mat
+reduced_model/matlab/La_*_chi_*.mat
+
+# editor and interpreter files
+__pycache__/
+*.asv
+.DS_Store

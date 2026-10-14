@@ -1,0 +1,63 @@
+function res = twobcf2(ya,yb,para,ka,C0,kT,ri,Lambda,ap,area0,rho0,H)
+% TWOBCF2  Boundary conditions for SHAPEF2: those of TWOBCF plus the prescribed
+% pole-to-pole height z(0) - z(1) = H, which determines the unknown chi = para(4).
+h0 = para(1);
+la0 = para(2);
+chi= para(4);
+% h0 = para(1);
+% la = para(2);
+% mu = para(3);
+% 
+% psi = y(1,:);
+% dpsi = y(2,:);
+% r = y(3,:);
+% %z = y(4,:);
+% al = y(5,:);
+% be = y(6,:);
+% rho = y(7,:);
+% drho = y(8,:);
+% %area = y(9,:);
+% %Num = y(10,:);
+% la = y(11,:);
+
+c0 = C0;
+
+epsilon=0.0001;
+
+alpha_i = (1/6).*((-6).*ap.^(-1).*chi.*ri.*((-1)+ya(7)).*ya(7)+(-6).*c0.* ...
+  h0.^(-1).*ka.*ya(7).*(ri.*ya(2)+(-1).*c0.*h0.*ri.*ya(7))+(-3).* ...
+  h0.^(-2).*ka.*ri.^(-1).*(ri.*ya(2)+(-1).*c0.*h0.*ri.*ya(7)).^2+6.* ...
+  ap.^(-1).*kT.*ri.*((1+(-1).*epsilon)>=(ya(7))&(ya(7))>=(epsilon)).*(( ...
+  -1).*log(1+(-1).*ya(7)).*((-1)+ya(7))+log(ya(7)).*ya(7))+ap.^(-1) ...
+  .*kT.*ri.*((ya(7))<(epsilon)).*((-6).*((-1)+epsilon).*log(1+( ...
+  -1).*epsilon)+6.*epsilon.*log(epsilon)+6.*(log(1+(-1).*epsilon)+( ...
+  -1).*log(epsilon)).*(epsilon+(-1).*ya(7))+(-3).*((-1)+epsilon).^( ...
+  -1).*epsilon.^(-1).*(epsilon+(-1).*ya(7)).^2+(1/2).*((-1).*((-1)+ ...
+  epsilon).^(-3)+epsilon.^(-3)).*(epsilon+(-1).*ya(7)).^4+((-1)+ ...
+  epsilon).^(-2).*epsilon.^(-2).*((-1)+2.*epsilon).*((-1).*epsilon+ ...
+  ya(7)).^3)+ap.^(-1).*kT.*ri.*((epsilon+ya(7))>(1)).*((-6).*(( ...
+  -1)+epsilon).*log(1+(-1).*epsilon)+6.*epsilon.*log(epsilon)+6.*( ...
+  log(1+(-1).*epsilon)+(-1).*log(epsilon)).*((-1)+epsilon+ya(7))+( ...
+  -3).*((-1)+epsilon).^(-1).*epsilon.^(-1).*((-1)+epsilon+ya(7)).^2+ ...
+  (-1).*((-1)+epsilon).^(-2).*epsilon.^(-2).*((-1)+2.*epsilon).*(( ...
+  -1)+epsilon+ya(7)).^3+(1/2).*((-1).*((-1)+epsilon).^(-3)+ ...
+  epsilon.^(-3)).*((-1)+epsilon+ya(7)).^4)+(-6).*ap.^(-1).*h0.^(-2) ...
+  .*Lambda.*ri.*ya(8).^2);
+
+
+res = [ ya(1)-0;...       % psi(0) = 0;
+    ya(3)-ri;...          % r(0) = ri;
+    ya(5)-alpha_i;...     % alpha(0) = alpha_i
+    ya(8)-0;...           % rho'(0) = 0;
+    ya(9)-0;...           % area(0) = 0;
+    ya(10)-0;...          % Num(0) = 0;
+    ya(11)-la0;...        % 
+    yb(1)-pi;...          % psi(1) = pi;
+    yb(3)-ri;...          % r(1) = ri;
+    yb(8)-0;...            % rho'(1) = 0
+    yb(9)-area0;...        % area(1) = area0;
+    yb(10)-rho0*area0;...  % Num(1) = area0*phi0;
+    ya(4)+yb(4);...       % z(0) + z(1) = 0;
+    ya(4)-yb(4)-H;...     % z(0) - z(1) = H;
+    ya(6)+yb(6);...       % beta(0) + beta(1) = 0;
+    ];         

@@ -1,0 +1,120 @@
+# Diffuse interfaces turn vesicle neck closure into a fold bifurcation
+
+Code accompanying
+
+> W. Xie and R. Ma, *Diffuse interfaces turn vesicle neck closure into a fold bifurcation* (2026).
+
+The paper studies budding of a closed, axisymmetric vesicle carrying a phase-separating protein field
+(Helfrich bending energy + Flory–Huggins free energy + Cahn–Hilliard gradient energy). The code computes
+
+* stationary branches of the **full model** by numerical continuation of the shape equations (MATLAB);
+* constrained energy landscapes, forces and folds of the **reduced model** (MATLAB and Python);
+* the linear stability of the uniform sphere and the energy of the complete-budding reference state
+  (Mathematica).
+
+Section numbers below refer to the Supplemental Material (SM) of the paper.
+
+## Parameters and units
+
+The stationary states depend on four dimensionless parameters, with R0 defined by the total area,
+A = 4πR0²:
+
+| paper | meaning | value(s) in the paper |
+|---|---|---|
+| ε = κ a_p/(k_BT R0²) | bending rigidity relative to the entropy of mixing | 0.2 |
+| χ̃ = χ/k_BT | Flory–Huggins interaction | varied |
+| Λ̃ = Λ/(R0² k_BT) | gradient-energy coefficient (sets the interface width) | varied |
+| φ0 | mean protein area fraction | 0.2 |
+
+with κ = 20 k_BT and R0²/a_p = 100 (R0 = 100 nm, a_p = 100 nm²).
+
+**The MATLAB code works in its own units.** The conversion is
+
+| MATLAB variable | value | paper |
+|---|---|---|
+| `R0` | 1 | length unit |
+| `area0` | 2 | A/(2π), i.e. A = 4πR0² |
+| `ka` | 0.4 | κ |
+| `kT` | 0.02 | k_BT, so κ = 20 k_BT |
+| `ap` (full model), `p.a0` (reduced model) | 0.01 | a_p/R0², so ε = 0.2 |
+| `Lambda`, `p.Lambda` | Λ̃ × `kT` | Λ̃ = `Lambda`/`kT` (e.g. 0.006 → 0.3) |
+| `chi`, `p.chi` | χ̃ × `kT` | χ̃ = `chi`/`kT` |
+| `rho0`, `p.phi0` | 0.2 | φ0 |
+| energies | — | divide by `kT` to obtain F/k_BT |
+
+The Python code uses the paper's units directly: lengths in R0, energies in k_BT, `lam` = Λ̃, `chi` = χ̃.
+
+## Contents
+
+```
+full_model/                 MATLAB, full model (SM Sec. S1)
+  shapef.m, twobcf.m        shape equations and boundary conditions, chi fixed
+  shapef2.m, twobcf2.m      same, with chi unknown and the pole-to-pole height fixed
+  iterate_chi.m             continuation in chi
+  iterate_Hchi.m            continuation in the pole-to-pole height (passes folds in chi)
+  run_chi_continuation.m    trace a branch in chi from a stored solution
+  run_lambda_then_chi.m     move a stored solution to a new Lambda~, then trace the branch in chi
+  data/branch_Lambda0p30.mat  751 stationary solutions at Lambda~ = 0.3, chi~ = 3.7-11.6 (starting data)
+reduced_model/
+  matlab/reduced_landscape.m  reduced model: F_min(r_n) at given (Lambda~, chi~) (SM Sec. S5)
+  python/                   Python implementation of the same model and the analyses below
+mathematica/
+  stability_incompressible.nb, Matrices_phi.nb   linear stability of the uniform sphere (SM Sec. S2)
+  energy_division.nb        energy of the complete-budding reference state "Division" (SM Sec. S3)
+```
+
+## Requirements
+
+* MATLAB (R2019b or later; `bvp5c`, `fminbnd`, `fminsearch` from base MATLAB; scripts with local functions).
+* Python ≥ 3.8 with NumPy, SciPy (≥ 1.6) and Matplotlib; LaTeX is used for figure labels if available.
+* Mathematica ≥ 12.1 for the notebooks.
+
+## Running
+
+### Full model
+
+From `full_model/`:
+
+```matlab
+run_chi_continuation     % branch at Lambda~ = 0.3, from chi~ = 9.795 through the fold of L_fold
+run_lambda_then_chi      % move to Lambda~ = 0.4 at fixed chi~ = 5, then trace the branch in chi
+```
+
+Each script saves the computed branch (`cchi`, `hheight`, `ssol`: chi, pole-to-pole height and the
+`bvp5c` solution structures) to a `.mat` file. The starting index, the direction of the first stage
+and the number of alternating chi/height stages are set at the top of each script. The boundary-value
+problem is solved with `bvp5c` (RelTol = 1e-3, AbsTol = 1e-8); the poles are placed at r = 1e-5 R0.
+Continuation in chi stops near a fold in chi, where continuation in the height takes over; only
+warnings issued by `bvp5c` stop a stage. Continuation in Lambda at fixed chi is a natural-parameter
+continuation as well and cannot pass a fold; it is therefore started from a prolate state.
+
+Expected results: `run_chi_continuation` passes the fold of the open-neck branch at chi~ = 11.574
+(L_fold at Lambda~ = 0.3); `run_lambda_then_chi` traces the Lambda~ = 0.4 branch through the end of the
+prolate part at chi~ = 8.95 to the start of the stable open-neck part at chi~ = 8.34 (Fig. 1(d)).
+
+### Reduced model
+
+`reduced_model/matlab/reduced_landscape.m` computes F_min(r_n) at the (Lambda~, chi~) set at its top.
+The Python scripts, run from `reduced_model/python/`, write to `reduced_model/python/output/`:
+
+| script | result | paper |
+|---|---|---|
+| `fig2_landscapes.py` | F_min(r_n) at Λ̃ = 0.15 (χ̃ = 15, 18, 21, 25), 0.3 and 0.45 | Fig. 2(a), 2(c) |
+| `fig2_forces.py` | Π_b, Π_p; position and depth of the weak point; Π_b(r_n → 0) vs 2πγ_ideal | Fig. 2(c), main text |
+| `fig2d_pull_vs_lambda.py` | Π_p/Π_p⁰ for Λ̃ = 0.05–0.45 at γ̃_pl = 6.5 | Fig. 2(d) and inset |
+| `figS6_small_lambda.py` | Π_b, Π_p for Λ̃ = 0.15, 0.05, 0.02 | SM Fig. S6 |
+| `reduced_folds.py` | folds of the reduced model, r_n and γ̃_pl at the fold | Fig. 3 (L_fold^re), SM Sec. S9 |
+| `ap_dependence.py` | dependence on a_p; reduced-model estimate of L_CB | SM Sec. S10 |
+| `line_tension.py` | planar line tension γ̃_pl = γ_pl R0/κ; contour γ̃_pl = 6.708 | Fig. 3, SM Sec. S9.2 |
+
+`fig2_forces.py` reads the output of `fig2_landscapes.py`. The other scripts are independent. Run times
+range from seconds (`line_tension.py`) to tens of minutes (`reduced_folds.py`; use `--parallel` to run
+the four Λ̃ at once).
+
+## License
+
+MIT; see `LICENSE`.
+
+## Citation
+
+If you use this code, please cite the paper above.
