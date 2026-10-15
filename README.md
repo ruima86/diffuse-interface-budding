@@ -54,9 +54,15 @@ full_model/                 MATLAB, full model (SM Sec. S1)
   iterate_Hchi.m            continuation in the pole-to-pole height (passes folds in chi)
   run_chi_continuation.m    trace a branch in chi from a stored solution
   run_lambda_then_chi.m     move a stored solution to a new Lambda~, then trace the branch in chi
-  data/branch_Lambda0p30.mat  751 stationary solutions at Lambda~ = 0.3, chi~ = 3.7-11.6 (starting data)
+  entropy_cutoff.m          regularization threshold of the mixing entropy (1e-4; SM Sec. S1.5)
+  fig1ab_energy_curves.m    energies of a branch, the uniform sphere and Division (Fig. 1(a,b))
+  fig1cde_neck_width_tension.m  neck radius, interface width, line tension along a branch (Fig. 1(c-e))
+  data/branch_Lambda0p30.mat  751 stationary solutions at Lambda~ = 0.3, chi~ = 3.7-11.6
+  data/branch_Lambda1p00_sphere.mat  uniform sphere, chi~ = 0-15.95 (reference curve "Sphere")
 reduced_model/
   matlab/reduced_landscape.m  reduced model: F_min(r_n) at given (Lambda~, chi~) (SM Sec. S5)
+  matlab/fig2b_barriers.m   barriers of the reduced and the full model versus chi (Fig. 2(b))
+  matlab/data/              reduced landscapes and the stable/unstable full-model branches at Lambda~ = 0.3
   python/                   Python implementation of the same model and the analyses below
 mathematica/
   stability_incompressible.nb, Matrices_phi.nb   linear stability of the uniform sphere (SM Sec. S2)
@@ -86,7 +92,24 @@ and the number of alternating chi/height stages are set at the top of each scrip
 problem is solved with `bvp5c` (RelTol = 1e-3, AbsTol = 1e-8); the poles are placed at r = 1e-5 R0.
 Continuation in chi stops near a fold in chi, where continuation in the height takes over; only
 warnings issued by `bvp5c` stop a stage. Continuation in Lambda at fixed chi is a natural-parameter
-continuation as well and cannot pass a fold; it is therefore started from a prolate state.
+continuation as well and cannot pass a fold; it is therefore started from a prolate state. In practice a branch at a
+new Lambda~ is obtained by choosing a (chi~, Lambda~) pair on an existing branch and stepping Lambda~;
+the starting state has to be chosen so that no fold lies in between. At small Lambda~ the prolate part
+and the open-neck part of a branch are best obtained separately, each from a starting shape of its own
+type, or with a mesh refined near the neck.
+
+The entropy cutoff is set in `entropy_cutoff.m`; the convergence test of SM Sec. S1.5 changes it
+there.
+
+From a computed branch, `fig1ab_energy_curves` gives the energy curves of Fig. 1(a,b) and
+`fig1cde_neck_width_tension` the neck radius r_n (interior minimum of r), interface width
+w = (phi_max - phi_min)/max|dphi/ds| and line tension gamma = (2 Lambda/a_p) int (dphi/ds)^2 ds of
+Fig. 1(c-e). Both read `data/branch_Lambda0p30.mat` as a test case; Fig. 1 uses the branches at
+Lambda~ = 0.1, 0.4, 0.8 and 1.75.
+
+The boundaries of Fig. 3 are read off the computed branches: D_bud, L_CB and D_co are crossings of
+energy curves (located by interpolation between stored solutions), C_an is analytical, and L_fold is
+the fold (largest chi~) of the stable open-neck part.
 
 Expected results: `run_chi_continuation` passes the fold of the open-neck branch at chi~ = 11.574
 (L_fold at Lambda~ = 0.3); `run_lambda_then_chi` traces the Lambda~ = 0.4 branch through the end of the
@@ -94,12 +117,15 @@ prolate part at chi~ = 8.95 to the start of the stable open-neck part at chi~ = 
 
 ### Reduced model
 
-`reduced_model/matlab/reduced_landscape.m` computes F_min(r_n) at the (Lambda~, chi~) set at its top.
+`reduced_model/matlab/reduced_landscape.m` computes F_min(r_n) at the (Lambda~, chi~) set at its top
+(Fig. 2(a)). `reduced_model/matlab/fig2b_barriers.m` reads such landscapes and the stable and unstable
+full-model branches from `reduced_model/matlab/data/` and plots both barriers versus chi~ (Fig. 2(b));
+the data included are those at Lambda~ = 0.3.
 The Python scripts, run from `reduced_model/python/`, write to `reduced_model/python/output/`:
 
 | script | result | paper |
 |---|---|---|
-| `fig2_landscapes.py` | F_min(r_n) at Λ̃ = 0.15 (χ̃ = 15, 18, 21, 25), 0.3 and 0.45 | Fig. 2(a), 2(c) |
+| `fig2_landscapes.py` | F_min(r_n) at Λ̃ = 0.15 (χ̃ = 15, 18, 21, 25), 0.3 and 0.45 | Fig. 2(c); cross-check of Fig. 2(a) |
 | `fig2_forces.py` | Π_b, Π_p; position and depth of the weak point; Π_b(r_n → 0) vs 2πγ_ideal | Fig. 2(c), main text |
 | `fig2d_pull_vs_lambda.py` | Π_p/Π_p⁰ for Λ̃ = 0.05–0.45 at γ̃_pl = 6.5 | Fig. 2(d) and inset |
 | `figS6_small_lambda.py` | Π_b, Π_p for Λ̃ = 0.15, 0.05, 0.02 | SM Fig. S6 |

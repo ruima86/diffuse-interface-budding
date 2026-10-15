@@ -16,7 +16,7 @@ function dy = shapef(u,y,para,ka,C0,kT,Lambda,chi,pre,fext,ap,V0)
 % kT, Lambda, chi, ap. pre (pressure difference), fext (axial point force) and V0
 % (strength of an optional soft repulsion near the axis) are all zero in this work.
 % The entropic term is replaced by its fourth-order Taylor expansion for
-% phi < epsilon and phi > 1 - epsilon, epsilon = 1e-4 (SM Sec. S1.5).
+% phi < epsilon and phi > 1 - epsilon, epsilon = ENTROPY_CUTOFF() = 1e-4 (SM Sec. S1.5).
 h = para(1);
 %la = para(2);
 mu = para(3);
@@ -39,7 +39,7 @@ c0 = C0;
 Sp=50;
 rlim=0.05;
 
-epsilon=0.0001;
+epsilon = entropy_cutoff();       % 1e-4 in this work
 
 fz = 0;                                                        % fz(area)
 % fr=0;

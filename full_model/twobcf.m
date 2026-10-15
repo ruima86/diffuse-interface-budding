@@ -23,7 +23,7 @@ la0 = para(2);
 
 c0 = C0;
 
-epsilon=0.0001;
+epsilon = entropy_cutoff();       % 1e-4 in this work
 
 alpha_i = (1/6).*((-6).*ap.^(-1).*chi.*ri.*((-1)+ya(7)).*ya(7)+(-6).*c0.* ...
   h0.^(-1).*ka.*ya(7).*(ri.*ya(2)+(-1).*c0.*h0.*ri.*ya(7))+(-3).* ...

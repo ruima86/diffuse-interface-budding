@@ -25,7 +25,7 @@ c0 = C0;
 Sp=50;
 rlim=0.05;
 
-epsilon=0.0001;
+epsilon = entropy_cutoff();       % 1e-4 in this work
 
 fz = 0;                                                        % fz(area)
 % fr=0;
