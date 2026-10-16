@@ -62,11 +62,12 @@ full_model/                 MATLAB, full model (SM Sec. S1)
 reduced_model/
   matlab/reduced_landscape.m  reduced model: F_min(r_n) at given (Lambda~, chi~) (SM Sec. S5)
   matlab/fig2b_barriers.m   barriers of the reduced and the full model versus chi (Fig. 2(b))
-  matlab/data/              reduced landscapes and the stable/unstable full-model branches at Lambda~ = 0.3
   python/                   Python implementation of the same model and the analyses below
 mathematica/
   stability_incompressible.nb, Matrices_phi.nb   linear stability of the uniform sphere (SM Sec. S2)
   energy_division.nb        energy of the complete-budding reference state "Division" (SM Sec. S3)
+fig3_boundaries.txt         transition points of Fig. 3 (D_bud, L_CB, D_co, L_fold)
+data_all/                   full data set, downloaded separately (see Data below)
 ```
 
 ## Requirements
@@ -105,11 +106,12 @@ From a computed branch, `fig1ab_energy_curves` gives the energy curves of Fig. 1
 `fig1cde_neck_width_tension` the neck radius r_n (interior minimum of r), interface width
 w = (phi_max - phi_min)/max|dphi/ds| and line tension gamma = (2 Lambda/a_p) int (dphi/ds)^2 ds of
 Fig. 1(c-e). Both read `data/branch_Lambda0p30.mat` as a test case; Fig. 1 uses the branches at
-Lambda~ = 0.1, 0.4, 0.8 and 1.75.
+Lambda~ = 0.1, 0.4, 0.8 and 1.75 (`data_all/full_model/branch_Lambda0p10.mat`, `..._0p40`, `..._0p80`,
+`..._1p75`), set as the input file at the top of each script.
 
 The boundaries of Fig. 3 are read off the computed branches: D_bud, L_CB and D_co are crossings of
 energy curves (located by interpolation between stored solutions), C_an is analytical, and L_fold is
-the fold (largest chi~) of the stable open-neck part.
+the fold (largest chi~) of the stable open-neck part. The points are listed in `fig3_boundaries.txt`.
 
 Expected results: `run_chi_continuation` passes the fold of the open-neck branch at chi~ = 11.574
 (L_fold at Lambda~ = 0.3); `run_lambda_then_chi` traces the Lambda~ = 0.4 branch through the end of the
@@ -118,9 +120,9 @@ prolate part at chi~ = 8.95 to the start of the stable open-neck part at chi~ = 
 ### Reduced model
 
 `reduced_model/matlab/reduced_landscape.m` computes F_min(r_n) at the (Lambda~, chi~) set at its top
-(Fig. 2(a)). `reduced_model/matlab/fig2b_barriers.m` reads such landscapes and the stable and unstable
-full-model branches from `reduced_model/matlab/data/` and plots both barriers versus chi~ (Fig. 2(b));
-the data included are those at Lambda~ = 0.3.
+(Fig. 2(a)). `fig2b_barriers(0.15)`, `fig2b_barriers(0.30)` and `fig2b_barriers(0.45)` in
+`reduced_model/matlab/` read such landscapes and the two full-model branches that bound the barrier
+from `data_all/reduced_model/`, and plot both barriers versus chi~ (Fig. 2(b)).
 The Python scripts, run from `reduced_model/python/`, write to `reduced_model/python/output/`:
 
 | script | result | paper |
@@ -136,6 +138,26 @@ The Python scripts, run from `reduced_model/python/`, write to `reduced_model/py
 `fig2_forces.py` reads the output of `fig2_landscapes.py`. The other scripts are independent. Run times
 range from seconds (`line_tension.py`) to tens of minutes (`reduced_folds.py`; use `--parallel` to run
 the four Λ̃ at once).
+
+## Data
+
+The stationary branches and landscapes behind the figures (about 8 GB) are too large for GitHub and are
+archived separately at [Zenodo DOI to be added]. Unpack the archive in the repository root, so that it
+creates `data_all/`:
+
+```
+data_all/full_model/branch_LambdaXpXX.mat     stationary branches at 18 values of Lambda~ from 0.075 to 2.0
+                                              (cchi, hheight, ssol, Lambda or La; MATLAB code units)
+data_all/reduced_model/landscape_LambdaXpXX_chiYYpYY.mat
+                                              reduced-model landscapes (output of reduced_landscape.m)
+                                              at Lambda~ = 0.15, 0.30, 0.45
+data_all/reduced_model/branch_LambdaXpXX_inner.mat, ..._outer.mat
+                                              the two full-model branches between which the
+                                              full-model barrier of Fig. 2(b) is taken
+```
+
+`full_model/data/` holds the two small files used by the examples: the branch at Lambda~ = 0.3 and the
+uniform sphere.
 
 ## License
 

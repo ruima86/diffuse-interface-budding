@@ -1,0 +1,67 @@
+# Transition points of Fig. 3 (the crosses), read off the full-model branches in data_all/full_model/.
+# D_bud, L_CB, D_co: crossings of energy curves, located by interpolation between stored solutions;
+# L_fold: fold (largest chi~) of the stable open-neck part. C_an is analytical:
+#   chi~_an = 2 Lambda~ + 1/[2 phi0 (1 - phi0)], phi0 = 0.2.
+# Lambda_tilde = Lambda/(kT R0^2), chi_tilde = chi/kT in the MATLAB code units (kT = 0.02, R0 = 1).
+# Repeated boundary points are listed once.
+
+# D_bud 
+Lambda_tilde       chi_tilde
+      0.0750       28.495
+      0.0850       25.615
+      0.0875       24.995
+      0.0900       24.395
+      0.0950       23.315
+      0.1000       22.285
+      0.1050       21.450
+      0.1100       20.670
+
+# L_CB 
+Lambda_tilde       chi_tilde
+      0.0900       28.330
+      0.0950       25.215
+      0.1000       23.300
+      0.1050       21.710
+      0.1100       20.630
+      0.1500       15.860
+      0.2000       12.640
+      0.3000        9.465
+      0.4000        7.905
+      0.4500        7.395
+      0.4750        7.185
+      0.5000        6.995
+      0.5500        6.675
+      0.6000        6.415
+      0.6250        6.305
+      0.7500        5.900
+      1.0000        5.640
+      1.2500        5.605
+      1.5000        5.605
+      1.7500        5.605
+      2.0000        5.605
+
+# D_co 
+Lambda_tilde       chi_tilde
+      0.0750        2.945
+      0.0850        3.000
+      0.0875        3.005
+      0.0900        3.015
+      0.0950        3.040
+      0.1000        3.060
+      0.1050        3.080
+      0.1100        3.105
+      0.1500        3.255
+      0.2000        3.425
+      0.3000        3.710
+
+# L_fold
+Lambda_tilde       chi_tilde
+      0.1100       29.485
+      0.1500       21.700
+      0.2000       16.520
+      0.3000       11.575
+      0.4000        9.245
+      0.4500        8.505
+      0.4750        8.195
+      0.5000        7.925
+      0.5500        7.465

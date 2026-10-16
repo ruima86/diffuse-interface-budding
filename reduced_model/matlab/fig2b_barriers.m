@@ -1,17 +1,16 @@
-function [fig, fullBarrier, reducedBarrier] = fig2b_barriers()
-% FIG2B_BARRIERS  Fig. 2(b) barriers for one Lambda value: reduced model (from the
-% landscapes of REDUCED_LANDSCAPE) and full model (energy difference between the
-% stable open-neck branch and the neighboring unstable branch at equal chi).
-% The full-model branch energy is evaluated with the ../../full_model code units.
-% Change Lambda in MATLAB code units below; the matching full-model branch
-% pair and reduced-model landscape files are read directly from data/.
-% The two barrier definitions and numerical extraction methods are the
-% same as in the original three-Lambda version of this file.
+function [fig, fullBarrier, reducedBarrier] = fig2b_barriers(lambdaTilde)
+% FIG2B_BARRIERS  Fig. 2(b) barriers at one Lambda~ (0.15, 0.30 or 0.45; default 0.30):
+% reduced model (from the landscapes of REDUCED_LANDSCAPE) and full model (energy
+% difference between the stable open-neck branch and the neighboring unstable branch
+% at equal chi). Reads data_all/reduced_model/ in the repository root (see README).
 
+if nargin < 1
+    lambdaTilde = 0.30;
+end
 scriptDir = fileparts(mfilename('fullpath'));
-dataDir = fullfile(scriptDir,'data');
-Lambda = 0.006;               % README: Lambda~ = Lambda/(R0^2*kBT) = 0.30
-numNumericalChiSamples = 8;   % same sampling used for Lambda=0.006 before
+dataDir = fullfile(scriptDir,'..','..','data_all','reduced_model');
+addpath(fullfile(scriptDir,'..','..','full_model'));   % entropy_cutoff
+numNumericalChiSamples = 8;   % chi samples on the common range of the two branches
 
 % README code units. Fig. 2(b) plots barriers in kBT, unlike Fig. 1 energy
 % curves, which are divided by 8*pi*kappa.
@@ -23,8 +22,8 @@ c0 = 0;
 pressure = 0;
 force = 0;
 energyScale = kBT;
-lambdaTilde = Lambda/(R0^2*kBT);
-lambdaToken = sprintf('%g',Lambda);
+Lambda = lambdaTilde*R0^2*kBT;     % code units
+lambdaToken = strrep(sprintf('%.2f',lambdaTilde),'.','p');
 
 reducedBarrier = collectSimplifiedBarrier( ...
     dataDir,lambdaToken,kBT,energyScale);
@@ -68,14 +67,15 @@ end
 function result = collectSimplifiedBarrier(dataDir,lambdaToken,kBT,energyScale)
 % Same discrete-extrema test and energy difference as the original script.
 result = emptyBarrierResult();
-fileList = dir(fullfile(dataDir,sprintf('La_%s_chi_*.mat',lambdaToken)));
+fileList = dir(fullfile(dataDir, ...
+    sprintf('landscape_Lambda%s_chi*.mat',lambdaToken)));
 chiPhysical = [];
 chiTilde = [];
 deltaFTilde = [];
 
 for fileNumber = 1:numel(fileList)
     fileName = fileList(fileNumber).name;
-    chiVal = parseChiFromName(fileName);
+    chiVal = parseChiFromName(fileName,kBT);
     if ~isfinite(chiVal)
         continue;
     end
@@ -153,9 +153,9 @@ function [innerBranch,outerBranch] = loadNumericalBranches(dataDir,lambdaToken)
 innerBranch = struct('cchi',[],'ssol',{{}});
 outerBranch = struct('cchi',[],'ssol',{{}});
 innerFile = fullfile(dataDir, ...
-    sprintf('La_%s_figure_branch_inner.mat',lambdaToken));
+    sprintf('branch_Lambda%s_inner.mat',lambdaToken));
 outerFile = fullfile(dataDir, ...
-    sprintf('La_%s_figure_branch_outer.mat',lambdaToken));
+    sprintf('branch_Lambda%s_outer.mat',lambdaToken));
 if isfile(innerFile) && isfile(outerFile)
     innerBranch = load(innerFile,'cchi','ssol');
     outerBranch = load(outerFile,'cchi','ssol');
@@ -174,14 +174,14 @@ for solutionNumber = 1:numel(cchi)
     r = interp1(sol.x,sol.y(3,:),u,'spline');
     psi = interp1(sol.x,sol.y(1,:),u,'spline');
     phi = interp1(sol.x,sol.y(7,:),u,'spline');
-    phiLog = min(max(real(phi),eps),1-eps);
+    mixingEntropy = regularizedMixingEntropy(real(phi));
     dpsi = interp1(sol.x,sol.y(2,:),u,'spline');
     chi = cchi(solutionNumber);
     bending = 0.5*h*ka.*r.* ...
         (dpsi/h-c0*phi+sin(psi)./r).^2;
     protein = r/(ap*h).* ...
         (Lambda*dphi.^2-chi*h^2.*(phi-1).*phi+ ...
-        h^2*kT.*(-(phiLog-1).*log(1-phiLog)+phiLog.*log(phiLog)));
+        h^2*kT.*mixingEntropy);
     forceEnergy = -force*h.*sin(psi);
     pressureEnergy = 0.5*h*pressure.*r.^2.*sin(psi);
     energy(solutionNumber) = real(2*pi*trapz( ...
@@ -189,12 +189,39 @@ for solutionNumber = 1:numel(cchi)
 end
 end
 
-function chiVal = parseChiFromName(fileName)
-token = regexp(fileName,'chi_([0-9]*\.?[0-9]+)','tokens','once');
+function entropy = regularizedMixingEntropy(phi)
+% Match the fourth-order Taylor continuation used by the full-model solver.
+delta = entropy_cutoff();
+entropy = zeros(size(phi));
+middle = phi >= delta & phi <= 1-delta;
+lower = phi < delta;
+upper = phi > 1-delta;
+
+phiMiddle = phi(middle);
+entropy(middle) = phiMiddle.*log(phiMiddle) + ...
+    (1-phiMiddle).*log(1-phiMiddle);
+entropy(lower) = entropyTaylor(phi(lower),delta);
+entropy(upper) = entropyTaylor(phi(upper),1-delta);
+end
+
+function value = entropyTaylor(phi,center)
+% Fourth-order Taylor polynomial of phi*log(phi)+(1-phi)*log(1-phi).
+offset = phi-center;
+f0 = center*log(center) + (1-center)*log(1-center);
+f1 = log(center) - log(1-center);
+f2 = 1/center + 1/(1-center);
+f3 = -1/center^2 + 1/(1-center)^2;
+f4 = 2/center^3 + 2/(1-center)^3;
+value = f0 + f1.*offset + (f2/2).*offset.^2 + ...
+    (f3/6).*offset.^3 + (f4/24).*offset.^4;
+end
+
+function chiVal = parseChiFromName(fileName,kBT)
+token = regexp(fileName,'_chi([0-9]+p[0-9]+)\.mat$','tokens','once');
 if isempty(token)
     chiVal = NaN;
 else
-    chiVal = str2double(token{1});
+    chiVal = str2double(strrep(token{1},'p','.'))*kBT;
 end
 end
 

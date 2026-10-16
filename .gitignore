@@ -7,3 +7,6 @@ reduced_model/matlab/La_*_chi_*.mat
 __pycache__/
 *.asv
 .DS_Store
+
+# full data set, downloaded from Zenodo (see README)
+data_all/
