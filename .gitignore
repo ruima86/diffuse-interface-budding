@@ -8,5 +8,5 @@ __pycache__/
 *.asv
 .DS_Store
 
-# full data set, downloaded from Zenodo (see README)
+# full data set, available on request (see README)
 data_all/

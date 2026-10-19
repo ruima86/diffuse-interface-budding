@@ -141,9 +141,9 @@ the four Λ̃ at once).
 
 ## Data
 
-The stationary branches and landscapes behind the figures (6.7 GB uncompressed) are too large for GitHub
-and are archived separately as `data_all.zip` at [Zenodo DOI to be added]. Unpack the archive in the
-repository root, so that it creates `data_all/`:
+The stationary branches and landscapes behind the figures (6.7 GB uncompressed) are too large for GitHub;
+they can be regenerated with the code here and are available from the authors upon reasonable request.
+The scripts expect the data set in the repository root as `data_all/`:
 
 ```
 data_all/full_model/branch_LambdaXpXX.mat     stationary branches at 18 values of Lambda~ from 0.075 to 2.0
