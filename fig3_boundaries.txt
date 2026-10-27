@@ -1,47 +1,72 @@
-# Transition points of Fig. 3 (the crosses), read off the full-model branches in data_all/full_model/.
-# D_bud, L_CB, D_co: crossings of energy curves, located by interpolation between stored solutions;
-# L_fold: fold (largest chi~) of the stable open-neck part. C_an is analytical:
-#   chi~_an = 2 Lambda~ + 1/[2 phi0 (1 - phi0)], phi0 = 0.2.
-# Lambda_tilde = Lambda/(kT R0^2), chi_tilde = chi/kT in the MATLAB code units (kT = 0.02, R0 = 1).
-# Repeated boundary points are listed once.
+# Boundaries of Fig. 3 (lines interpolate these points). Lambda_tilde = Lambda/(kT R0^2), chi_tilde = chi/kT
+# in the MATLAB code units (kT = 0.02, R0 = 1).
+# D_bud: crossing of the stable prolate and open-neck parts of a branch.
+# L_CB:  complete budding falls below the lowest stationary state. The complete-budding energy is evaluated
+#        with the same regularized entropy (cutoff 1e-4, entropy_cutoff.m) as the stationary solutions.
+# D_co:  crossing of the stable deformed branch with the uniform sphere.
+# L_fold: fold (largest chi~) of the stable open-neck part. For Lambda~ >= 0.0875 it is read off the stored
+#        branches; for Lambda~ <= 0.08 it was followed from the fold at Lambda~ = 0.0875 by lowering Lambda~ at
+#        fixed height and locating the maximum of chi~ in the height at each Lambda~.
+# L_fold_re: fold of the reduced model (reduced_model/python/reduced_folds.py).
+# C_an is analytical: chi~_an = 2 Lambda~ + 1/[2 phi0 (1 - phi0)], phi0 = 0.2.
+# Crossings are located by interpolation between stored solutions.
 
-# D_bud 
+# D_bud
 Lambda_tilde       chi_tilde
-      0.0750       28.495
+      0.0400       50.190
+      0.0500       40.890
+      0.0600       34.700
+      0.0750       28.511
       0.0850       25.615
-      0.0875       24.995
-      0.0900       24.395
+      0.0875       24.984
+      0.0900       24.396
       0.0950       23.315
-      0.1000       22.285
+      0.1000       22.343
       0.1050       21.450
-      0.1100       20.670
+      0.1100       20.664
+      0.1500       16.203
+      0.2000       13.152
+      0.3000       10.128
+      0.4000        8.637
+      0.5000        7.756
+      0.5500        7.439
 
-# L_CB 
+# L_CB
 Lambda_tilde       chi_tilde
-      0.0900       28.330
-      0.0950       25.215
-      0.1000       23.300
-      0.1050       21.710
-      0.1100       20.630
-      0.1500       15.860
-      0.2000       12.640
-      0.3000        9.465
-      0.4000        7.905
+      0.0400       56.108
+      0.0500       44.150
+      0.0600       36.380
+      0.0750       28.823
+      0.0875       24.920
+      0.0900       24.316
+      0.1000       22.193
+      0.1100       20.455
+      0.1500       15.821
+      0.2000       12.637
+      0.3000        9.467
+      0.4000        7.907
       0.4500        7.395
       0.4750        7.185
-      0.5000        6.995
-      0.5500        6.675
+      0.5000        6.997
+      0.5500        6.677
       0.6000        6.415
       0.6250        6.305
       0.7500        5.900
-      1.0000        5.640
-      1.2500        5.605
-      1.5000        5.605
-      1.7500        5.605
-      2.0000        5.605
+      0.8000        5.805
+      1.0000        5.642
+      1.2500        5.604
+      1.5000        5.604
+      1.7500        5.604
+      2.0000        5.604
 
-# D_co 
+# D_co
 Lambda_tilde       chi_tilde
+      0.0400        2.767
+      0.0450        2.796
+      0.0500        2.824
+      0.0550        2.850
+      0.0600        2.876
+      0.0650        2.901
       0.0750        2.945
       0.0850        3.000
       0.0875        3.005
@@ -56,12 +81,37 @@ Lambda_tilde       chi_tilde
 
 # L_fold
 Lambda_tilde       chi_tilde
-      0.1100       29.485
-      0.1500       21.700
-      0.2000       16.520
-      0.3000       11.575
-      0.4000        9.245
+      0.0400       83.349
+      0.0450       73.768
+      0.0500       66.138
+      0.0550       59.924
+      0.0600       54.769
+      0.0650       50.426
+      0.0700       46.719
+      0.0750       43.521
+      0.0800       40.735
+      0.0875       37.171
+      0.1100       29.486
+      0.1500       21.702
+      0.2000       16.521
+      0.3000       11.574
+      0.4000        9.247
       0.4500        8.505
       0.4750        8.195
-      0.5000        7.925
+      0.5000        7.926
       0.5500        7.465
+
+# L_fold_re
+Lambda_tilde       chi_tilde
+      0.0400       75.913
+      0.0500       60.590
+      0.0600       50.467
+      0.0750       40.473
+      0.1000       30.630
+      0.1100       27.949
+      0.1500       21.020
+      0.2000       16.393
+      0.3000       11.960
+      0.4000        9.854
+      0.4500        9.180
+      0.5500        8.216

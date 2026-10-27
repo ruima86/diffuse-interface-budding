@@ -55,7 +55,8 @@ full_model/                 MATLAB, full model (SM Sec. S1)
   run_chi_continuation.m    trace a branch in chi from a stored solution
   run_lambda_then_chi.m     move a stored solution to a new Lambda~, then trace the branch in chi
   entropy_cutoff.m          regularization threshold of the mixing entropy (1e-4; SM Sec. S1.5)
-  fig1ab_energy_curves.m    energies of a branch, the uniform sphere and Division (Fig. 1(a,b))
+  fig1ab_energy_curves.m    energies of a branch, the uniform sphere and complete budding (Fig. 1(a,b))
+  small_lambda/             small Lambda~: D_bud, L_CB, D_co and L_fold at Lambda~ = 0.04-0.08 (Fig. 3)
   fig1cde_neck_width_tension.m  neck radius, interface width, line tension along a branch (Fig. 1(c-e))
   data/branch_Lambda0p30.mat  751 stationary solutions at Lambda~ = 0.3, chi~ = 3.7-11.6
   data/branch_Lambda1p00_sphere.mat  uniform sphere, chi~ = 0-15.95 (reference curve "Sphere")
@@ -65,8 +66,8 @@ reduced_model/
   python/                   Python implementation of the same model and the analyses below
 mathematica/
   stability_incompressible.nb, Matrices_phi.nb   linear stability of the uniform sphere (SM Sec. S2)
-  energy_division.nb        energy of the complete-budding reference state "Division" (SM Sec. S3)
-fig3_boundaries.txt         transition points of Fig. 3 (D_bud, L_CB, D_co, L_fold)
+  energy_division.nb        energy of the complete-budding reference state "Complete bud" (SM Sec. S3)
+fig3_boundaries.txt         boundary points of Fig. 3 (D_bud, L_CB, D_co, L_fold, L_fold^re)
 data_all/                   full data set, downloaded separately (see Data below)
 ```
 
@@ -106,12 +107,34 @@ From a computed branch, `fig1ab_energy_curves` gives the energy curves of Fig. 1
 `fig1cde_neck_width_tension` the neck radius r_n (interior minimum of r), interface width
 w = (phi_max - phi_min)/max|dphi/ds| and line tension gamma = (2 Lambda/a_p) int (dphi/ds)^2 ds of
 Fig. 1(c-e). Both read `data/branch_Lambda0p30.mat` as a test case; Fig. 1 uses the branches at
-Lambda~ = 0.1, 0.4, 0.8 and 1.75 (`data_all/full_model/branch_Lambda0p10.mat`, `..._0p40`, `..._0p80`,
+Lambda~ = 0.075, 0.4, 0.8 and 1.75 (`data_all/full_model/branch_Lambda0p075.mat`, `..._0p40`, `..._0p80`,
 `..._1p75`), set as the input file at the top of each script.
+
+Fig. 1(a,b) plots (F - F_CB)/kT, the energy measured from complete budding. The complete-budding
+energy is evaluated with the same regularized entropy as the stationary solutions (`entropy_cutoff.m`);
+with the exact entropy instead, L_CB is shifted at small Lambda~, where the protein-poor phase lies inside
+the regularized window.
 
 The boundaries of Fig. 3 are read off the computed branches: D_bud, L_CB and D_co are crossings of
 energy curves (located by interpolation between stored solutions), C_an is analytical, and L_fold is
 the fold (largest chi~) of the stable open-neck part. The points are listed in `fig3_boundaries.txt`.
+
+At Lambda~ < 0.0875 the scripts in `full_model/small_lambda/` are used (run from that folder after
+`addpath('..')`, with the starting branches `branch_Lambda0p075.mat` and `branch_Lambda0p0875.mat` of
+`data_all/full_model/` on the path):
+
+| script | result |
+|---|---|
+| `small_lambda3(s)`, `small_lambda4(s)` | prolate (s = 1) and open-neck (s = 2) parts near D_bud at Lambda~ = 0.06, 0.05, 0.04: D_bud, L_CB |
+| `lcb_0p04` | open-neck part at Lambda~ = 0.04 continued past L_CB |
+| `dco_small` | onset of the deformed branch at Lambda~ = 0.04-0.065: D_co |
+| `lfold_track_gamma` | L_fold at Lambda~ = 0.04-0.08, followed from the fold at Lambda~ = 0.0875; line tension at the fold |
+| `width_fold_track`, `gamma_fold_branch` | neck radius, interface width and line tension at the folds (SM table of the fold) |
+| `openneck_to_fold` | stable open-neck part at Lambda~ = 0.075 continued to its fold (Fig. 1(c)) |
+
+`small_lambda4` and `lcb_0p04` start from the states saved by `small_lambda3`; `openneck_to_fold` and
+`width_fold_track` read the output of `lfold_track_gamma`. The open neck at small Lambda~ needs up to
+6e5 mesh points.
 
 Expected results: `run_chi_continuation` passes the fold of the open-neck branch at chi~ = 11.574
 (L_fold at Lambda~ = 0.3); `run_lambda_then_chi` traces the Lambda~ = 0.4 branch through the end of the

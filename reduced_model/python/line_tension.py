@@ -5,8 +5,8 @@
 
 with Delta g~ the Flory-Huggins free energy measured from the common tangent at the binodal compositions.
 
-Run as a script, it writes the curve gamma_pl R0/kappa = 6.708 (the classical ideal-neck value, black
-dotted curve in Fig. 3 of the paper) to output/isogamma_6p708.txt.
+Run as a script, it writes the curve gamma_pl R0/kappa = 6.708 (the classical ideal-neck value) in the
+(Lambda~, chi~) plane to output/isogamma_6p708.txt.
 """
 import os
 import numpy as np
@@ -32,11 +32,13 @@ def gamma_pl(lam, chi, inv_ap=INV_AP, kappa=KAPPA, n=40001):
     pa = binodal(chi); pb = 1 - pa
     g = lambda p: xlogx(p) + xlogx(1-p) + chi*p*(1-p)
     mu = (g(pb) - g(pa))/(pb - pa)
-    S = max(25.0, 0.7*chi + 15.0)                      # substitution p = (1 + tanh s)/2
+    # integrate over [pa, pb] only, with p = pa + (pb - pa)(1 + tanh s)/2; outside the binodal
+    # Delta g is positive again and must not contribute (matters near the critical point chi~ = 2)
+    S = max(25.0, 0.7*chi + 15.0)
     s = np.linspace(-S, S, n)
-    p = 0.5*(1 + np.tanh(s))
+    p = pa + (pb - pa)*0.5*(1 + np.tanh(s))
     with np.errstate(over='ignore'):
-        jac = 0.5/np.cosh(s)**2                        # -> 0 in the tails
+        jac = 0.5*(pb - pa)/np.cosh(s)**2              # -> 0 in the tails
     dg = np.clip(g(p) - (g(pa) + mu*(p - pa)), 0.0, None)
     I = _trapz(np.sqrt(dg)*jac, s)
     return 2*inv_ap*np.sqrt(lam)*I/kappa

@@ -1,8 +1,9 @@
-% FIG1AB_ENERGY_CURVES  Dimensionless energy curves of Fig. 1(a,b): deformed branch,
-% uniform sphere and the complete-budding reference (Division), E~ = F/(8*pi*kappa).
+% FIG1AB_ENERGY_CURVES  Energy curves of Fig. 1(a,b): deformed branch, uniform sphere and the
+% complete-budding reference (Complete bud), as E~ = F/(8*pi*kappa) and as (F - F_CB)/kT, the
+% quantity plotted in Fig. 1(a,b).
 % Run this script from MATLAB. Change only the two input files below.
 % The included Lambda~ = 0.30 branch is a test case, NOT a Fig. 1 branch;
-% Fig. 1(a,b) require branch data at Lambda~ = 0.10, 0.40, 0.80, 1.75.
+% Fig. 1(a,b) require branch data at Lambda~ = 0.075, 0.40, 0.80, 1.75.
 clear; clc;
 scriptDir = fileparts(mfilename('fullpath'));
 sphere = load(fullfile(scriptDir,'data','branch_Lambda1p00_sphere.mat'));
@@ -36,21 +37,19 @@ if sphereError > 1e-4
     warning('Sphere data differ from the uniform-sphere formula by %.3g.',sphereError);
 end
 
-% Division is the minimized energy of two spheres joined at a closed neck
-% (SM Sec. S3); it is independent of Lambda~. No hand-entered data are used.
-% Preserve the original plotted range: chi_code=0.047:0.001:0.6,
-% i.e. chi~=2.35:0.05:30. The original Division line did not reach chi~=0.
-chiDivision = (2.35:0.05:30)';
+% Complete bud is the minimized energy of two spheres joined at a closed neck
+% (SM Sec. S3); it is independent of Lambda~. Its free-energy density uses the
+% same regularized entropy as the stationary solutions (entropy_cutoff.m), so
+% that energy differences and the crossing L_CB are consistent: for
+% chi~ >~ 9.2 the protein-poor phase lies inside the regularized window.
+chiDivision = (0:0.05:90)';
 Edivision = zeros(size(chiDivision));
-chiBinodal = log((1-phi0)/phi0)/(1-2*phi0);
+gReg = @(x,chi) chi*x.*(1-x)+entropyRegularized(x);
 for i = 1:numel(chiDivision)
     chi = chiDivision(i);
-    if chi <= chiBinodal
-        phiLow = phi0;
-    else
-        phiLow = fzero(@(x) log(x/(1-x))+chi*(1-2*x),[realmin,phi0]);
-    end
-    gDivision = chi*phiLow*(1-phiLow)+entropyIdeal(phiLow);
+    phiLow = fminbnd(@(x) gReg(x,chi),-0.02,0.5,optimset('TolX',1e-14));
+    gDivision = gReg(phi0,chi);
+    if phiLow < phi0, gDivision = min(gDivision,gReg(phiLow,chi)); end
     Edivision(i) = 2+gDivision/(2*epsilon);
 end
 
@@ -64,8 +63,12 @@ curves.deformed.E_bending_tilde = Ebend;
 curves.deformed.E_protein_tilde = Eprotein;
 curves.sphere.chi_tilde = chiSphere;
 curves.sphere.E_tilde = Esphere;
-curves.division.chi_tilde = chiDivision;
-curves.division.E_tilde = Edivision;
+curves.complete_bud.chi_tilde = chiDivision;
+curves.complete_bud.E_tilde = Edivision;
+% Fig. 1(a,b): energies relative to complete budding, (F - F_CB)/kT.
+toKT = 8*pi*kappa/kT;
+curves.deformed.dF_kT = (Ebranch-interp1(chiDivision,Edivision,chiBranch))*toKT;
+curves.sphere.dF_kT = (Esphere-interp1(chiDivision,Edivision,chiSphere))*toKT;
 
 figure;
 scatter(chiBranch,Ebranch,4,'filled'); hold on;
@@ -73,7 +76,7 @@ plot(chiSphere,Esphere,'-.','LineWidth',1.2);
 plot(chiDivision,Edivision,'-.','LineWidth',1.2);
 xlabel('$\widetilde\chi$','Interpreter','latex');
 ylabel('$\widetilde E=F/(8\pi\kappa)$','Interpreter','latex');
-legend('Deformed','Sphere','Division','Location','best');
+legend('Deformed','Sphere','Complete bud','Location','best');
 title(['$\widetilde\Lambda=',num2str(lambdaTilde,'%.3g'),'$'], ...
     'Interpreter','latex');
 box on;
