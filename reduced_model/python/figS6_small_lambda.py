@@ -1,4 +1,4 @@
-"""Bending resistance and interfacial pull of the reduced model for decreasing Lambda~ (Fig. S6 of the
+"""Bending resistance and interfacial pull of the reduced model for decreasing Lambda~ (Fig. S8 of the
 Supplemental Material). For Lambda~ = 0.15, 0.05, 0.02, chi~ is chosen to give the planar line tensions of
 the four curves of Fig. 2(c) (Lambda~ = 0.15, chi~ = 15, 18, 21, 25).
 

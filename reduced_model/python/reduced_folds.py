@@ -1,4 +1,4 @@
-"""Folds of the reduced model (L_fold^re in Fig. 3; reduced-model columns of the fold table in SM Sec. S9;
+"""Folds of the reduced model (L_fold^re in Fig. 3; reduced-model columns of the fold table in SM Sec. X;
 the fold at Lambda~ = 0.10 quoted in the main text).
 
 For each Lambda~, chi~ is bisected between a value with an open-neck minimum and one without; the fold is

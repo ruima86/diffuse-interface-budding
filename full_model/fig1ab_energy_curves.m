@@ -30,7 +30,7 @@ lambdaTilde = lambdaBranch/(R0^2*kT);
 % input file; do not extend it by extrapolation.
 Esphere = EsphereNumerical;
 
-% Independent exact check of the sphere reference (SM Sec. S3).
+% Independent exact check of the sphere reference (SM Sec. III).
 EsphereExact = 1 + (chiSphere*phi0*(1-phi0)+entropyIdeal(phi0))/(2*epsilon);
 sphereError = max(abs(EsphereNumerical-EsphereExact));
 if sphereError > 1e-4
@@ -38,7 +38,7 @@ if sphereError > 1e-4
 end
 
 % Complete bud is the minimized energy of two spheres joined at a closed neck
-% (SM Sec. S3); it is independent of Lambda~. Its free-energy density uses the
+% (SM Sec. III); it is independent of Lambda~. Its free-energy density uses the
 % same regularized entropy as the stationary solutions (entropy_cutoff.m), so
 % that energy differences and the crossing L_CB are consistent: for
 % chi~ >~ 9.2 the protein-poor phase lies inside the regularized window.
@@ -146,7 +146,7 @@ end
 
 function value = entropyRegularized(phi)
 % Fourth-order Taylor continuation for phi outside [delta,1-delta],
-% matching SHAPEF and SM Sec. S1.5.
+% matching SHAPEF and SM Sec. I E.
 delta = entropy_cutoff();
 q = min(phi,1-phi);
 value = zeros(size(q));

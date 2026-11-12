@@ -1,5 +1,5 @@
 """Planar line tension gamma_pl R0/kappa of the flat interface between the coexisting phases
-(Supplemental Material, Sec. S9.2):
+(Supplemental Material, Sec. X A):
 
     gamma_pl R0/kappa = (2/eps) Lambda~^(1/2) int_{phi_1}^{phi_2} sqrt(Delta g~) dphi,   eps = kappa a_p/(kBT R0^2),
 

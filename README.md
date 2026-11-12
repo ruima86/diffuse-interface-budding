@@ -1,8 +1,8 @@
-# Diffuse interfaces turn vesicle neck closure into a fold bifurcation
+# Mechanics of vesicle budding with finite interface width: Abrupt neck closure at a fold
 
 Code accompanying
 
-> W. Xie and R. Ma, *Diffuse interfaces turn vesicle neck closure into a fold bifurcation* (2026).
+> W. Xie and R. Ma, *Mechanics of vesicle budding with finite interface width: Abrupt neck closure at a fold* (2026).
 
 The paper studies budding of a closed, axisymmetric vesicle carrying a phase-separating protein field
 (Helfrich bending energy + Flory–Huggins free energy + Cahn–Hilliard gradient energy). The code computes
@@ -10,7 +10,9 @@ The paper studies budding of a closed, axisymmetric vesicle carrying a phase-sep
 * stationary branches of the **full model** by numerical continuation of the shape equations (MATLAB);
 * constrained energy landscapes, forces and folds of the **reduced model** (MATLAB and Python);
 * the linear stability of the uniform sphere and the energy of the complete-budding reference state
-  (Mathematica).
+  (Mathematica);
+* time integration of the full model, testing the stability of the open-neck states and the closure of
+  the neck above the fold (MATLAB).
 
 Section numbers below refer to the Supplemental Material (SM) of the paper.
 
@@ -47,26 +49,27 @@ The Python code uses the paper's units directly: lengths in R0, energies in k_BT
 ## Contents
 
 ```
-full_model/                 MATLAB, full model (SM Sec. S1)
+full_model/                 MATLAB, full model (SM Sec. I)
   shapef.m, twobcf.m        shape equations and boundary conditions, chi fixed
   shapef2.m, twobcf2.m      same, with chi unknown and the pole-to-pole height fixed
   iterate_chi.m             continuation in chi
   iterate_Hchi.m            continuation in the pole-to-pole height (passes folds in chi)
   run_chi_continuation.m    trace a branch in chi from a stored solution
   run_lambda_then_chi.m     move a stored solution to a new Lambda~, then trace the branch in chi
-  entropy_cutoff.m          regularization threshold of the mixing entropy (1e-4; SM Sec. S1.5)
+  entropy_cutoff.m          regularization threshold of the mixing entropy (1e-4; SM Sec. I E)
   fig1ab_energy_curves.m    energies of a branch, the uniform sphere and complete budding (Fig. 1(a,b))
   small_lambda/             small Lambda~: D_bud, L_CB, D_co and L_fold at Lambda~ = 0.04-0.08 (Fig. 3)
   fig1cde_neck_width_tension.m  neck radius, interface width, line tension along a branch (Fig. 1(c-e))
+  dynamics/                 time integration at Lambda~ = 0.4: stability and neck closure (SM Sec. IX, Fig. S7)
   data/branch_Lambda0p30.mat  751 stationary solutions at Lambda~ = 0.3, chi~ = 3.7-11.6
   data/branch_Lambda1p00_sphere.mat  uniform sphere, chi~ = 0-15.95 (reference curve "Sphere")
 reduced_model/
-  matlab/reduced_landscape.m  reduced model: F_min(r_n) at given (Lambda~, chi~) (SM Sec. S5)
+  matlab/reduced_landscape.m  reduced model: F_min(r_n) at given (Lambda~, chi~) (SM Sec. V)
   matlab/fig2b_barriers.m   barriers of the reduced and the full model versus chi (Fig. 2(b))
   python/                   Python implementation of the same model and the analyses below
 mathematica/
-  stability_incompressible.nb, Matrices_phi.nb   linear stability of the uniform sphere (SM Sec. S2)
-  energy_division.nb        energy of the complete-budding reference state "Complete bud" (SM Sec. S3)
+  stability_incompressible.nb, Matrices_phi.nb   linear stability of the uniform sphere (SM Sec. II)
+  energy_division.nb        energy of the complete-budding reference state "Complete bud" (SM Sec. III)
 fig3_boundaries.txt         boundary points of Fig. 3 (D_bud, L_CB, D_co, L_fold, L_fold^re)
 data_all/                   full data set, downloaded separately (see Data below)
 ```
@@ -100,7 +103,7 @@ the starting state has to be chosen so that no fold lies in between. At small La
 and the open-neck part of a branch are best obtained separately, each from a starting shape of its own
 type, or with a mesh refined near the neck.
 
-The entropy cutoff is set in `entropy_cutoff.m`; the convergence test of SM Sec. S1.5 changes it
+The entropy cutoff is set in `entropy_cutoff.m`; the convergence test of SM Sec. I E changes it
 there.
 
 From a computed branch, `fig1ab_energy_curves` gives the energy curves of Fig. 1(a,b) and
@@ -140,6 +143,11 @@ Expected results: `run_chi_continuation` passes the fold of the open-neck branch
 (L_fold at Lambda~ = 0.3); `run_lambda_then_chi` traces the Lambda~ = 0.4 branch through the end of the
 prolate part at chi~ = 8.95 to the start of the stable open-neck part at chi~ = 8.34 (Fig. 1(d)).
 
+### Dynamics
+
+`full_model/dynamics/` contains the four trajectories of SM Fig. S7, each a self-contained script that
+starts from a stored stationary state; see `full_model/dynamics/README.md`.
+
 ### Reduced model
 
 `reduced_model/matlab/reduced_landscape.m` computes F_min(r_n) at the (Lambda~, chi~) set at its top
@@ -152,11 +160,10 @@ The Python scripts, run from `reduced_model/python/`, write to `reduced_model/py
 |---|---|---|
 | `fig2_landscapes.py` | F_min(r_n) at Λ̃ = 0.15 (χ̃ = 15, 18, 21, 25), 0.3 and 0.45 | Fig. 2(c); cross-check of Fig. 2(a) |
 | `fig2_forces.py` | Π_b, Π_p; position and depth of the weak point; Π_b(r_n → 0) vs 2πγ_ideal | Fig. 2(c), main text |
-| `fig2d_pull_vs_lambda.py` | Π_p/Π_p⁰ for Λ̃ = 0.05–0.45 at γ̃_pl = 6.5 | Fig. 2(d) and inset |
-| `figS6_small_lambda.py` | Π_b, Π_p for Λ̃ = 0.15, 0.05, 0.02 | SM Fig. S6 |
-| `reduced_folds.py` | folds of the reduced model, r_n and γ̃_pl at the fold | Fig. 3 (L_fold^re), SM Sec. S9 |
-| `ap_dependence.py` | dependence on a_p; reduced-model estimate of L_CB | SM Sec. S10 |
-| `line_tension.py` | planar line tension γ̃_pl = γ_pl R0/κ; contour γ̃_pl = 6.708 | Fig. 3, SM Sec. S9.2 |
+| `fig2d_pull_vs_lambda.py` | Π_p/Π_p⁰ for Λ̃ = 0.05–0.45 at the fold χ̃_c | Fig. 2(d) and inset |
+| `figS6_small_lambda.py` | Π_b, Π_p for Λ̃ = 0.15, 0.05, 0.02 | SM Fig. S8 |
+| `reduced_folds.py` | folds of the reduced model, r_n and γ̃_pl at the fold | Fig. 3 (L_fold^re), SM Sec. X |
+| `line_tension.py` | planar line tension γ̃_pl = γ_pl R0/κ; contour γ̃_pl = 6.708 | Fig. 3, SM Sec. X A |
 
 `fig2_forces.py` reads the output of `fig2_landscapes.py`. The other scripts are independent. Run times
 range from seconds (`line_tension.py`) to tens of minutes (`reduced_folds.py`; use `--parallel` to run

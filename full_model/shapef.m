@@ -1,11 +1,11 @@
 function dy = shapef(u,y,para,ka,C0,kT,Lambda,chi,pre,fext,ap,V0)
 % SHAPEF  Shape equations of the axisymmetric vesicle with a protein field
-% (Supplemental Material, Sec. S1), as a first-order system in the normalized
+% (Supplemental Material, Sec. I), as a first-order system in the normalized
 % arclength u in [0,1] (arclength s = h*u). Used for continuation in chi.
 %
 %   y(1) psi      tangent angle            y(2) dpsi/du
 %   y(3) r        distance from the axis   y(4) z  axial coordinate
-%   y(5) alpha    y(6) beta                Lagrange-multiplier functions (SM Sec. S1)
+%   y(5) alpha    y(6) beta                Lagrange-multiplier functions (SM Sec. I)
 %   y(7) phi      protein area fraction    y(8) dphi/du
 %   y(9) area/(2*pi) accumulated from u = 0
 %   y(10) protein area/(2*pi) accumulated from u = 0
@@ -16,7 +16,7 @@ function dy = shapef(u,y,para,ka,C0,kT,Lambda,chi,pre,fext,ap,V0)
 % kT, Lambda, chi, ap. pre (pressure difference), fext (axial point force) and V0
 % (strength of an optional soft repulsion near the axis) are all zero in this work.
 % The entropic term is replaced by its fourth-order Taylor expansion for
-% phi < epsilon and phi > 1 - epsilon, epsilon = ENTROPY_CUTOFF() = 1e-4 (SM Sec. S1.5).
+% phi < epsilon and phi > 1 - epsilon, epsilon = ENTROPY_CUTOFF() = 1e-4 (SM Sec. I E).
 h = para(1);
 %la = para(2);
 mu = para(3);

@@ -1,4 +1,4 @@
-"""Reduced (four-region) budding model, Supplemental Material Sec. S5.
+"""Reduced (four-region) budding model, Supplemental Material Sec. V.
 
 Python implementation of the same model as ../matlab/reduced_landscape.m.
 

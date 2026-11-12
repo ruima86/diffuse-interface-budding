@@ -1,5 +1,5 @@
 function res = twobcf(ya,yb,para,ka,C0,kT,ri,Lambda,chi,ap,area0,rho0)
-% TWOBCF  Boundary conditions for SHAPEF (SM Sec. S1, Table of boundary conditions).
+% TWOBCF  Boundary conditions for SHAPEF (SM Sec. I, Table of boundary conditions).
 % The poles are placed at r = ri (ri = 1e-5 in the run scripts) instead of r = 0
 % to avoid the coordinate singularity; alpha(0) follows from the h-condition at
 % the pole. area0 = A/(2*pi) and rho0 = phi0 fix the total area and protein number.

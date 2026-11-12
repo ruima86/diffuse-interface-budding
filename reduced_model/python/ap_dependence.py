@@ -1,11 +1,11 @@
-"""Dependence on the area a_p of a phase-separating unit (SM Sec. S10), in the reduced model with R0 = 100 nm.
+"""Dependence on the area a_p of a phase-separating unit (supplementary analysis, not in the SM), in the reduced model with R0 = 100 nm.
 
-(1) Table of SM Sec. S10: a_p = 100 nm^2 (Lambda~ = 0.15, chi~ = 15) and a_p = 25 nm^2, with Lambda~ and chi~
+(1) Table: a_p = 100 nm^2 (Lambda~ = 0.15, chi~ = 15) and a_p = 25 nm^2, with Lambda~ and chi~
     chosen so that the planar interface has the same width (22.2 nm) and line tension (4.32 pN).
 (2) Scan of chi~ at a_p = 25 nm^2: line tension at which the open-neck minimum disappears, and the barrier
     versus the distance from it (to be compared with the a_p = 100 nm^2 barriers of fig2_landscapes.py).
 (3) L_CB estimate of the reduced model: closed-neck energy, corrected for the residual gradient energy
-    93 Lambda~ kBT of the prescribed profile (SM Sec. S5.1), compared with the open-neck minimum.
+    93 Lambda~ kBT of the prescribed profile (SM Sec. V C), compared with the open-neck minimum.
 Runtime: several minutes.
 """
 import numpy as np

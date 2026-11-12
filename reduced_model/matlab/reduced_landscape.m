@@ -1,5 +1,5 @@
 % REDUCED_LANDSCAPE  Constrained energy landscape F_min(r_n) of the reduced budding model
-% (Supplemental Material, Sec. S5).
+% (Supplemental Material, Sec. V).
 %
 % The geometry is prescribed: two spherical caps (regions I and IV, radii Ra = R_- and
 % Rb = R_+) joined through a neck of radius aNeck = r_n by two connecting regions
@@ -25,7 +25,7 @@ xiMinAbs = 0.0001;
 xiMaxAbs = 0.4;
 p.xi0 = 0;
 aVec = logspace(log10(0.0001), log10(0.4), 120);
-% Prescribed neck curvature C(a) = k*a + b (SM Sec. S5)
+% Prescribed neck curvature C(a) = k*a + b (SM Sec. V)
 p.C2H_k =-0.68;
 p.C2H_b =2 ;
 

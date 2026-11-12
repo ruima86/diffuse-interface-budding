@@ -1,5 +1,5 @@
-"""Interfacial pull of the reduced model for decreasing Lambda~ at fixed planar line tension
-gamma_pl R0/kappa = 6.5 (Fig. 2(d) of the paper and its inset).
+"""Interfacial pull of the reduced model for decreasing Lambda~, each at its fold chi~_c
+(Fig. 2(d) of the paper and its inset).
 
 Writes output/fig2d_pull_vs_Lambda.txt with columns
   Lambda~  chi~  r_n~  r_n~ (chi~/Lambda~)^(1/2)  Pi_p [kBT/R0]  Pi_p/Pi_p(r_n~ = 0.3).
@@ -8,16 +8,15 @@ Runtime: a few minutes.
 import os
 import numpy as np
 import reduced_model as M
-from line_tension import chi_at
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, 'output'); os.makedirs(OUT, exist_ok=True)
 a_grid = np.geomspace(1e-4, 0.4, 110)
+CHI_C = {0.45: 9.18, 0.30: 11.96, 0.15: 21.02, 0.10: 30.63, 0.05: 60.59}    # folds of the reduced model
 with open(os.path.join(OUT, 'fig2d_pull_vs_Lambda.txt'), 'w') as f:
-    f.write("# Reduced model: interfacial pull along gamma_pl R0/kappa = 6.5 (Fig. 2(d))\n"
+    f.write("# Reduced model: interfacial pull at the fold chi~_c of each Lambda~ (Fig. 2(d))\n"
             "# columns: Lambda~  chi~  r_n~  r_n~*sqrt(chi~/Lambda~)  Pi_p [kBT/R0]  Pi_p/Pi_p(r_n~=0.3)\n")
-    for lam in [0.45, 0.30, 0.15, 0.10, 0.05]:
-        chi = chi_at(lam, 6.5, lo=3.0, hi=200.0)
+    for lam, chi in CHI_C.items():
         L = M.landscape(lam, chi, a_grid)
         a, Pb, Pp = M.forces(L)
         P0 = np.interp(0.3, a, Pp)
