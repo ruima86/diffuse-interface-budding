@@ -52,8 +52,8 @@ with a different step, without a new perturbation (code time t; t/τ_D = 0.00312
 | `run_trajectory_3.m` | 1 (t ≤ 20), 0.1 (t ≤ 21.3), 0.01 (t ≤ 21.44), 0.001 | t = 21.456 (0.067 τ_D), r_n = 0.0038 R0 |
 
 The two closing runs were stopped by hand once r_n < 0.005 R0. Across each reduction of the step the
-closing rate dr_n/dt changes by 3–6%, comparable to its change over the following step, so the closing
-trajectories show no visible dependence on the step. The free energy, recomputed from the solutions,
+closing rate dr_n/dt changes by 3–6%, comparable to its change over the following step, so the rate shows
+no jump where the step is reduced. The free energy, recomputed from the solutions,
 decreases monotonically to within 0.002 k_BT.
 
 The neck radius r_n is the interior minimum of r; the interface width is
